@@ -1,0 +1,4 @@
+## Q 
+client : 글 작성자(관리자가 아닌 사용자)
+Restaurant == 게시글
+category == A

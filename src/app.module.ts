@@ -9,6 +9,8 @@ import { UsersModule } from './users/users.module';
 import { CommonModule } from './common/common.module';
 import { User } from './users/entity/user.entity';
 import { JwtModule } from './jwt/jwt.module';
+import { Category } from './restaurants/entities/category.entity';
+import { AuthModule } from './auth/auth.module';
 
 
 @Module({
@@ -21,12 +23,12 @@ import { JwtModule } from './jwt/jwt.module';
         NODE_ENV: Joi.string()
           .valid('dev', 'prod')
           .required(),
-        DB_HOST: Joi.string().required(),
-        DB_PORT: Joi.string().required(),
-        DB_USERNAME: Joi.string().required(),
-        DB_PASSWORD: Joi.string().required(),
-        DB_NAME: Joi.string().required(),
-        SECRET_KEY: Joi.string().required(),
+        //DB_HOST: Joi.string().required(),
+        //DB_PORT: Joi.string().required(),
+        //DB_USERNAME: Joi.string().required(),
+        //DB_PASSWORD: Joi.string().required(),
+        //DB_NAME: Joi.string().required(),
+        //SECRET_KEY: Joi.string().required(),
       }),
     }),
     TypeOrmModule.forRoot({
@@ -38,7 +40,7 @@ import { JwtModule } from './jwt/jwt.module';
       database: process.env.DB_NAME,
       synchronize: process.env.NODE_ENV !== 'prod', //entity를 찾아서 알아서 migration(graphql에서 사용하는 스키마를 자동으로 생성해주고 DB에도 즉시 반영 )
       logging:process.env.NODE_ENV !== 'prod', //DB에 돌아가는 모든 로그들을 확인 가능해짐
-      entities:[User] //entity에 들어있는 것이 DB가 됨
+      entities:[User, Restaurant, Category] //entity에 들어있는 것이 DB가 됨
      
     }),
     GraphQLModule.forRoot({
@@ -46,8 +48,9 @@ import { JwtModule } from './jwt/jwt.module';
   }),
   JwtModule.forRoot(),
   UsersModule,
+  RestaurantsModule,
   CommonModule,
-  
+  AuthModule,
 ],
   controllers: [],
   providers: [],
