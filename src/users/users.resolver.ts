@@ -5,6 +5,7 @@ import { AuthUser } from "src/auth/auth-user.decorator";
 import { AuthGuard } from "src/auth/auth.guard";
 import { UserProfileInput, UserProfileOutput } from "src/users/dtos/user-profile.dto";
 import { CreateAccountInput, CreateAccountOutput } from "./dtos/create-account.dto";
+import { DeleteAccountInput, DeleteAccountOutput } from "./dtos/delete-account.dto";
 import { EditProfileInput, EditProfileOutput } from "./dtos/edit-profile.dto";
 import { LoginInput, LoginOutput} from "./dtos/login.dto";
 import { User } from "./entities/user.entity";
@@ -39,7 +40,7 @@ export class UsersResolver {
     @Mutation(returns => LoginOutput)
     async login(@Args('input') loginInput: LoginInput ): Promise<LoginOutput>{//input Arguments 필요
         try {
-            return  this.usersService.login(loginInput) //loginInput 저장
+            return this.usersService.login(loginInput) //loginInput 저장
         } catch(error){
             return{
                 ok: false,
@@ -69,11 +70,9 @@ export class UsersResolver {
             return{
                 error:"User Not Found",
                 ok: false,
-
             }
         };     
     }
-
     @UseGuards(AuthGuard)
     @Mutation(returns=> EditProfileOutput)
     async editProfile(@AuthUser() authUser: User, @Args('input') editProfileInput: EditProfileInput,
@@ -92,4 +91,26 @@ export class UsersResolver {
         }
 
     }
+    @UseGuards(AuthGuard)
+    @Mutation(returns=> DeleteAccountOutput)
+    async deleteAccount(
+        @AuthUser() authUser: User,
+        @Args('input') deleteAccountInput: DeleteAccountInput,
+    ): Promise<DeleteAccountOutput>{
+        try{
+            await this.usersService.deleteAccount(authUser.id, deleteAccountInput);
+            return {
+                ok: true,
+            }
+        }catch(error)
+        {
+            return  {
+                ok: false,
+                error
+                
+            }
+        }
+
+    }
+    
 }
