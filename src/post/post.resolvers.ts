@@ -2,7 +2,7 @@
 import { Args, Mutation,Resolver } from "@nestjs/graphql";
 import { AuthUser } from "src/auth/auth-user.decorator";
 import { Role } from "src/auth/role.decorator";
-import { CoreOutput } from "src/common/dtos/outputdto";
+import { CoreOutput } from "src/common/dtos/output.dto";
 import { User } from "src/users/entity/user.entity";
 import { CreatePostInput, CreatePostOutput } from "./dtos/create-post.dto";
 import { DeletePostInput, DeletePostOutput } from "./dtos/delete-post.dto";

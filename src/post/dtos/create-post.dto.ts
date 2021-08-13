@@ -1,6 +1,6 @@
 
 import { Field, InputType, ObjectType, PickType } from "@nestjs/graphql";
-import { CoreOutput } from "src/common/dtos/outputdto";
+import { CoreOutput } from "src/common/dtos/output.dto";
 import { O_Post } from "../entities/O_post.entity";
 
 @InputType()

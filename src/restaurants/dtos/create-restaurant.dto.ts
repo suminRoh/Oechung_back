@@ -1,6 +1,6 @@
 import { ArgsType, Field, InputType, ObjectType, OmitType, PickType } from "@nestjs/graphql";
 import { IsBoolean, IsString, Length } from "class-validator";
-import { CoreOutput } from "src/common/dtos/outputdto";
+import { CoreOutput } from "src/common/dtos/output.dto";
 import { StringLiteral } from "ts-morph";
 import { Restaurant } from "../entities/restaurant.entity";
 

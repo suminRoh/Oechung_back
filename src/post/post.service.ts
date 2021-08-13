@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CoreOutput } from 'src/common/dtos/outputdto';
+import { CoreOutput } from 'src/common/dtos/output.dto';
 import { User } from 'src/users/entity/user.entity';
 import { Repository } from 'typeorm';
 import { CreatePostInput, CreatePostOutput } from './dtos/create-post.dto';

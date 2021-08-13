@@ -28,6 +28,10 @@ export class User extends CoreEntity{
     email:string;
 
     @Column()
+    @Field(type=>Number)
+    studentId:number;
+
+    @Column()
     @Field(type=>String)
     @IsString()
     password:string;

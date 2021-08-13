@@ -7,6 +7,8 @@ import * as jwt from 'jsonwebtoken';
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "src/jwt/jwt.service";
+import { EditProfileInput } from "./dtos/edit-profile.dto";
+import { DeleteAccountInput } from "./dtos/delete-account.dto";
 
 @Injectable()
 export class UserService{
@@ -15,21 +17,20 @@ export class UserService{
         private readonly jwtService :JwtService,
     ){}
 
-    async createAccount({email,password,role}:CreateAccountInput): Promise<{ ok: boolean; error?: string }>{
+    async createAccount({email,studentId,password,role}:CreateAccountInput): Promise<{ ok: boolean; error?: string }>{
         try{
             const exists=await this.users.findOne({email});
-            if(exists){
-                //make error
-                return { ok: false, error: 'There is a user with that email already' };
+            const exists2 = await this.users.findOne({studentId})
+            if(exists || exists2){
+                return {ok: false, error: '이미 가입한 이메일이거나 학번입니다.'}; 
             }
-            await this.users.save(this.users.create({email,password,role}));
-            return { ok: true };
-        }catch(e){
-            //make error
-            return { ok: false, error: "Couldn't create account" };
+        
+            await this.users.save(this.users.create({email, studentId, password, role})); //없다면 새로운 계정 create & save
+            return {ok: true};
+        } catch(e){
+            console.log(e);
+            return {ok: false, error: "Couldn't create account"};
         }
-        //check new User
-        //create user & hash the password
         
     }
 
@@ -49,7 +50,7 @@ export class UserService{
             if(!passwordCorrect){
                  return{
                     ok:false,
-                    error:'Wrong password',
+                    error:"잘못된 비밀번호입니다",
                 }
             }
             const token=this.jwtService.sign(user.id);
@@ -68,5 +69,38 @@ export class UserService{
 
     async findById(id:number):Promise<User>{
         return this.users.findOne({id});
+    }
+
+    async editProfile(userId: number, {email, password}: EditProfileInput){
+        const user = await this.users.findOne(userId);
+        if(email){
+            user.email = email
+        }
+        if(password){
+            user.password = password
+        }
+        return this.users.save(user) //db에 entity 존재 유무 체크 안함
+    }// save는 entity 없으면 생성함
+
+    async deleteAccount(userId: number, {email, password, studentId}: DeleteAccountInput){
+        const user = await this.users.findOne(userId);
+        try{
+            if(!user){ //user가 존재하지 않는다면
+            return {
+                ok:false,
+                error: '없는 계정입니다',
+            }
+            }
+            await this.users.delete(userId);
+            return{
+                ok: true,
+            }
+        }catch(error){
+            return{
+                ok: false,
+                error,
+            };
+        }
+
     }
 }  
