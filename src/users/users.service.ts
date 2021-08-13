@@ -9,14 +9,11 @@ import { ConfigService } from "@nestjs/config";
 import { JwtService } from "src/jwt/jwt.service";
 
 @Injectable()
-export class UsersService{
+export class UserService{
     constructor(
         @InjectRepository(User) private readonly users: Repository <User>,
-        private readonly config:ConfigService,
         private readonly jwtService :JwtService,
-    ){
-        this.jwtService.hello();
-    }
+    ){}
 
     async createAccount({email,password,role}:CreateAccountInput): Promise<{ ok: boolean; error?: string }>{
         try{
@@ -50,12 +47,12 @@ export class UsersService{
             }
             const passwordCorrect=await user.checkPassword(password); //위에 변수 user이용
             if(!passwordCorrect){
-                return{
+                 return{
                     ok:false,
                     error:'Wrong password',
                 }
             }
-            const token=jwt.sign({id:user.id},this.config.get('SECRET_KEY'));
+            const token=this.jwtService.sign(user.id);
             return{
                 ok:true,
                 token,
@@ -67,5 +64,9 @@ export class UsersService{
                 error,
             }
         }
+    }
+
+    async findById(id:number):Promise<User>{
+        return this.users.findOne({id});
     }
 }  

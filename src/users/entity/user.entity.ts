@@ -1,20 +1,23 @@
 import { Field, InputType, ObjectType, registerEnumType } from "@nestjs/graphql";
 import { FieldsOnCorrectTypeRule } from "graphql";
 import { CoreEntity } from "src/common/entities/core.entity";
-import { BeforeInsert, Column, Entity } from "typeorm";
+import { BeforeInsert, BeforeUpdate, Column, Entity, OneToMany } from "typeorm";
 import * as bcrypt from 'bcrypt';
 import { InternalServerError } from "http-errors";
 import { InternalServerErrorException } from "@nestjs/common";
-import { IsEmail, IsEnum } from "class-validator";
-enum UserRole{
-    Owner,
-    Client,
-    Delivery
+import { IsBoolean, IsEmail, IsEnum, IsString } from "class-validator";
+import { Restaurant } from "src/restaurants/entities/restaurant.entity";
+import { O_Post } from "src/post/entities/O_post.entity";
+export enum UserRole{
+    Owner='Owner',
+    Client='Client',
+    Admin='Admin'
+   
 }
 
 registerEnumType(UserRole,{name:'UserRole'})
 
-@InputType({isAbstract:true})
+@InputType('UserInputType',{isAbstract:true})
 @ObjectType()
 @Entity()
 export class User extends CoreEntity{
@@ -26,6 +29,7 @@ export class User extends CoreEntity{
 
     @Column()
     @Field(type=>String)
+    @IsString()
     password:string;
 
     @Field(type=>UserRole)
@@ -33,7 +37,22 @@ export class User extends CoreEntity{
     @IsEnum(UserRole)
     role:UserRole;
 
+    @Column({default:false})
+    @Field(type=>Boolean)
+    @IsBoolean()
+    verified:boolean;
+
+    @Field(type=>[Restaurant])
+    @OneToMany(type=>Restaurant, restaurant=>restaurant.owner)
+    restaurants: Restaurant[];
+
+
+    @Field(type=>[O_Post])
+    @OneToMany(type=>O_Post, post=>post.title)
+    posts: O_Post[]; 
+ 
     @BeforeInsert()
+    @BeforeUpdate()
     async hashPassword():Promise<void>{
         try{
             this.password=await bcrypt.hash(this.password,10);

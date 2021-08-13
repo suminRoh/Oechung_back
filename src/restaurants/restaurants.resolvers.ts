@@ -1,41 +1,50 @@
+import { SetMetadata } from '@nestjs/common';
 import {Args, Mutation, Query,Resolver} from '@nestjs/graphql';
 import { create } from 'domain';
+import { AuthUser } from 'src/auth/auth-user.decorator';
+import { Role } from 'src/auth/role.decorator';
+import { User, UserRole } from 'src/users/entity/user.entity';
 import { ThrowStatement } from 'ts-morph';
-import { CreateRestaurantDto} from './dtos/create-restaurant.dto';
-import { UpdateRestaurantDto } from './dtos/update-restaurant.dto';
+import { CreateRestaurantInput, CreateRestaurantOutput} from './dtos/create-restaurant.dto';
+import { DeleteRestaurantInput, DeleteRestaurantOutput } from './dtos/delete-restaurant.dto';
+import { EditRestaurantInput, EditRestaurantOutput } from './dtos/edit-restaurant.dto';
+
 import { Restaurant } from './entities/restaurant.entity';
 import { RestaurantService } from './restaurants.service';
 @Resolver(of=>Restaurant)
 export class RestaurantsResolver{
     constructor(private readonly restaurantService:RestaurantService){}
-    @Query(returns=>[Restaurant])
-    restaurants():Promise<Restaurant[]>{
-        return this.restaurantService.getAll();
-    }
 
-    @Mutation(returns=>Boolean) 
-    async createRestaurant(@Args('input') createRestaurantDto:CreateRestaurantDto):Promise<boolean>{
-        try{
-            await this.restaurantService.createRestaurant(createRestaurantDto);
-            return true;
-        }catch(e){
-            console.log(e);
-            return false;
-        }
+    @Mutation(returns=>CreateRestaurantOutput) 
+    @Role(['Owner'])
+    async createRestaurant(
+        @AuthUser() authUser:User,
+        @Args('input') CreateRestaurantInput:CreateRestaurantInput):Promise<CreateRestaurantOutput>{  
+        return this.restaurantService.createRestaurant(authUser,CreateRestaurantInput);
+    
+    
     }//resolver에서 createRestaurant를 호출하면 createRestaurantDto를 받음 
 
-    @Mutation(returns=>Boolean)
-    async updateRestaurant(
-        @Args('input') updateRestaurantDto:UpdateRestaurantDto
-    ):Promise<boolean>{
-        try{
-            await this.restaurantService.upadteRestaurant(updateRestaurantDto);
-            return true;
-        }catch(e){
-            console.log(e);
-            return false;
-        }
+    @Mutation(returns=>EditRestaurantOutput)
+    @Role(["Owner"])
+    editRestaurant(
+        @AuthUser() owner:User,
+        @Args('input') editRestaurantInput:EditRestaurantInput
+    ):Promise<EditRestaurantOutput>{
+        return this.restaurantService.editRestaurant(owner,editRestaurantInput);
     }
+
+    @Mutation(returns=>DeleteRestaurantOutput)
+    @Role(["Owner"])
+    deleteRestaurant(
+        @AuthUser() owner:User,
+        @Args('input') deleteRestaurantInput:DeleteRestaurantInput
+    ):Promise<DeleteRestaurantOutput>{
+        return this.restaurantService.deleteRestaurant(owner,deleteRestaurantInput);
+    }
+    
+
+
 }
 //typescript 형식 : :Restaurant[]
 //graphql 형식: [Restaurant]
