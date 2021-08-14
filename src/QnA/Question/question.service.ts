@@ -39,7 +39,7 @@ export class QuestionService{
     ): Promise<EditQuestionOutput> {
         try {
             const question = await this.questions.findOne(
-                this.editQuestion.questionId,
+                editQuestionInput.questionId,
             );
             if (!question) {
                 return {

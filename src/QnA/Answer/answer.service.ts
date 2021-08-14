@@ -40,7 +40,7 @@ export class AnswerService{
     ): Promise<EditAnswerOutput> {
         try {
             const answer = await this.answers.findOne(
-                this.editAnswer.questionId,
+                editAnswerInput.questionId,
             );
             if (!answer) {
                 return {
