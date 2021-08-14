@@ -11,6 +11,8 @@ import { User } from './users/entity/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { Category } from './restaurants/entities/category.entity';
 import { AuthModule } from './auth/auth.module';
+import { QnAModule } from './QnA/QnA.module';
+import { QnAModule } from './qn-a/qn-a.module';
 
 
 @Module({
@@ -51,6 +53,7 @@ import { AuthModule } from './auth/auth.module';
   RestaurantsModule,
   CommonModule,
   AuthModule,
+  QnAModule,
 ],
   controllers: [],
   providers: [],
