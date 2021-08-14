@@ -13,7 +13,8 @@ import { JwtModule } from './jwt/jwt.module';
 import { Category } from './restaurants/entities/category.entity';
 import { AuthModule } from './auth/auth.module';
 import { QnAModule } from './QnA/QnA.module';
-import { QnAModule } from './qn-a/qn-a.module';
+import { Question } from './QnA/Question/entities/question.entity';
+import { Answer } from './qna/Answer/entities/answer.entitiy';
 =======
 import { Verification } from './users/entity/verification.entity';
 import { Category } from './restaurants/entities/category.entity';
@@ -65,7 +66,7 @@ import { O_category } from './post/entities/O_category.entity';
 <<<<<<< HEAD
       entities:[User, Restaurant, Category] //entity에 들어있는 것이 DB가 됨
 =======
-      entities:[User,Verification,Restaurant,Category,O_Post,O_category] //entity에 들어있는 것이 DB가 됨
+      entities:[User,Verification,Restaurant,Category,O_Post,O_category, Question, Answer] //entity에 들어있는 것이 DB가 됨
 >>>>>>> 7ad6e6fbfef03bfd07be8c5b0363863f00833150
      
     }),
